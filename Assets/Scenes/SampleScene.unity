@@ -919,6 +919,34 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4791003599045724, guid: 8b9387602b4cf1a43a98b7dc6c20c9e3,
     type: 2}
   m_PrefabInternal: {fileID: 1897447980}
+--- !u!1 &1648217692
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1648217693}
+  m_Layer: 0
+  m_Name: Pedestal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1648217693
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1648217692}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 20}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1679815072
 Prefab:
   m_ObjectHideFlags: 0
@@ -1019,7 +1047,17 @@ Prefab:
         type: 2}
       propertyPath: m_audioClip
       value: 
-      objectReference: {fileID: 8300000, guid: 738685b1c9c76344f99a92e2425d20cb, type: 3}
+      objectReference: {fileID: 8300000, guid: 542f3c605d51c66498c562d3d2a2ce0b, type: 3}
+    - target: {fileID: 82522087836909952, guid: 8b9387602b4cf1a43a98b7dc6c20c9e3,
+        type: 2}
+      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 82522087836909952, guid: 8b9387602b4cf1a43a98b7dc6c20c9e3,
+        type: 2}
+      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].time
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8b9387602b4cf1a43a98b7dc6c20c9e3, type: 2}
   m_IsPrefabAsset: 0
@@ -1160,7 +1198,7 @@ Prefab:
         type: 2}
       propertyPath: m_audioClip
       value: 
-      objectReference: {fileID: 8300000, guid: 542f3c605d51c66498c562d3d2a2ce0b, type: 3}
+      objectReference: {fileID: 8300000, guid: 738685b1c9c76344f99a92e2425d20cb, type: 3}
     - target: {fileID: 114101333068588338, guid: 8b9387602b4cf1a43a98b7dc6c20c9e3,
         type: 2}
       propertyPath: m_Enabled
@@ -1170,6 +1208,16 @@ Prefab:
         type: 2}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 82522087836909952, guid: 8b9387602b4cf1a43a98b7dc6c20c9e3,
+        type: 2}
+      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 82522087836909952, guid: 8b9387602b4cf1a43a98b7dc6c20c9e3,
+        type: 2}
+      propertyPath: m_Volume
+      value: 0.22
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8b9387602b4cf1a43a98b7dc6c20c9e3, type: 2}
