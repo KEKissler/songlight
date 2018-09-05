@@ -5,6 +5,7 @@ using UnityEngine;
 public class EmitterController : MonoBehaviour {
     public float heldVolumePercentage;
     public Transform emitterParent;
+    [HideInInspector] public bool canBePickedUp = true;
 
     private AudioSource aud;
 
@@ -15,9 +16,12 @@ public class EmitterController : MonoBehaviour {
 
     public void PickUp(Transform source)
     {
-        transform.parent = source;
-        transform.position = source.transform.position;
-        aud.volume *= heldVolumePercentage;
+        if (canBePickedUp)
+        {
+            transform.parent = source;
+            transform.position = source.transform.position;
+            aud.volume *= heldVolumePercentage;
+        }
     }
 
     public void PutDown()
