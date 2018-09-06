@@ -252,7 +252,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12121debdb638b540b7b00777eb9c1d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  heldVolumePercentage: 0.3
+  heldVolumePercentage: 1
   emitterParent: {fileID: 0}
   canBePickedUp: 1
 --- !u!135 &135309503443461232

@@ -29,6 +29,7 @@ public class PlayerMovementController : MonoBehaviour {
                     if (nearbyPedestal)
                     {
                         nearbyPedestal.AddTrack(heldEmitter);
+                       nearbyObjects.Remove(heldEmitter);//no longer interactable as it is part of the pedestal now
                     }
                     heldEmitter = null;
 
@@ -58,7 +59,7 @@ public class PlayerMovementController : MonoBehaviour {
 
     public void OnTriggerExit(Collider other)
     {
-        if (other.GetComponent<EmitterController>())
+        if (other.GetComponent<EmitterController>() && other.GetComponent<EmitterController>().canBePickedUp)
         {
             nearbyObjects.Remove(other.gameObject);
         }
