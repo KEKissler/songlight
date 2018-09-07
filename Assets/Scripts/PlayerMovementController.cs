@@ -6,6 +6,7 @@ public class PlayerMovementController : MonoBehaviour {
     public float speed = 1.0f;
     public KeyCode pickUpEmitterKey;
     [HideInInspector] public bool isRespawning = false;
+    [HideInInspector] public Vector3 respawnPoint;
 
     private List<GameObject> nearbyObjects = new List<GameObject>();
     private Rigidbody rb;
@@ -14,6 +15,7 @@ public class PlayerMovementController : MonoBehaviour {
 
 	void Start () {
         rb = GetComponent<Rigidbody>();
+        respawnPoint = transform.position;
 	}
 
     void Update()
