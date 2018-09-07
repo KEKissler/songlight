@@ -63,6 +63,22 @@ public class FogController : MonoBehaviour {
             }
             
         }
+        else if (pedInRange.Count == 2)
+        {
+            //untested
+            Vector2[] toTest = getCircleIntersectionPoints(
+                new Vector2(pedInRange[0].position.x, pedInRange[0].position.z),
+                new Vector2(pedInRange[1].position.x, pedInRange[1].position.z),
+                pedInRange[0].GetComponent<PedestalController>().fogRange,
+                pedInRange[1].GetComponent<PedestalController>().fogRange);
+            toReturn = new Vector3(toTest[0].x, player.position.y, toTest[0].y);
+            Vector3 alternativeOption = new Vector3(toTest[1].x, player.position.y, toTest[1].y);
+            if(Vector3.Distance(player.position, alternativeOption) < Vector3.Distance(player.position, toReturn))
+            {
+                toReturn = alternativeOption;
+            }
+            toReturn.y = transform.position.y;
+        }
         else
         {
             Debug.Log("lmaonerd");
@@ -84,10 +100,15 @@ public class FogController : MonoBehaviour {
         return toReturn;
     }
 
-    private Vector4 getCircleIntersectionPoints(Vector2 c1, Vector2 c2, float r1, float r2)
+    private Vector2[] getCircleIntersectionPoints(Vector2 c1, Vector2 c2, float r1, float r2)
     {
-        Vector4 toReturn = new Vector4();//first two values are x and y of point 1, next two are x and y of point 2
-        return toReturn;
+        float dx = c2.x - c1.x, dy = c2.y - c1.y, d = Mathf.Sqrt(dx * dx + dy * dy);
+        float chorddistance = (r1 * r1 - r2 * r2 + d * d) / (2 * d);
+        float halfchordlength = Mathf.Sqrt(r1 * r1 - chorddistance * chorddistance);
+        Vector2 mdpt = new Vector2(c1.x + chorddistance * dx / d, c1.y + chorddistance * dy / d);
+        return new Vector2[] {
+            new Vector2(mdpt.x + halfchordlength * dy / d, mdpt.y - halfchordlength * dx / d),
+            new Vector2(mdpt.x - halfchordlength * dy / d, mdpt.y + halfchordlength * dx / d)};
     }
     private void handleRespawnCoroutines()
     {
@@ -153,7 +174,6 @@ public class FogController : MonoBehaviour {
 
     public void OnTriggerEnter(Collider other)
     {
-        Debug.Log("oifam");
         if(other.transform == player)
         {
             respawnPlayer();
