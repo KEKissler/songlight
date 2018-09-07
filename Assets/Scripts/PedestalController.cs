@@ -29,6 +29,8 @@ public class PedestalController : MonoBehaviour {
         if (acceptedEmitters.Contains(unverifiedEmitter))
         {
             unverifiedEmitter.GetComponent<EmitterController>().canBePickedUp = false;
+            unverifiedEmitter.GetComponent<AudioSource>().spatialBlend = 0;
+            unverifiedEmitter.GetComponent<AudioSource>().volume = GetComponent<AudioSource>().volume;
             unverifiedEmitter.transform.parent = transform;
             unverifiedEmitter.transform.position = transform.position;
             UpdateFogRange(numTracksAdded++);
