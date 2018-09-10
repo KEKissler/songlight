@@ -7,6 +7,7 @@ public class FogController : MonoBehaviour {
     private AudioSource aud;
     private bool fadedOut, fadedIn, hasSetPos = false;
     private List<Transform> pedestals = new List<Transform>();
+    private const float distanceLeniency = 0.01f;
 
     
     public float fadeOutVolumePerSecond;
@@ -19,11 +20,12 @@ public class FogController : MonoBehaviour {
         fadeOutVolumePerSecond /= 100;
         pmc = player.GetComponent<PlayerMovementController>();
         aud = GetComponent<AudioSource>();
-        
-        foreach(Transform t in pedestalParent.transform)
+
+        foreach (Transform t in pedestalParent.transform)
         {
             pedestals.Add(t);
         }
+
     }
 
 	
@@ -46,8 +48,8 @@ public class FogController : MonoBehaviour {
     }
     private Vector3 nearestFogPoint()
     {
-        Vector3 toReturn;
-        List<Transform> pedInRange = pedestalsInRange();
+        Vector3 toReturn = new Vector3();
+        List<Transform> pedInRange = pedestalsInRange(new Vector2(player.position.x, player.position.z));
         if(pedInRange.Count == 1)
         {
             Vector2 normalPart = new Vector2((player.position - pedInRange[0].position).x, (player.position - pedInRange[0].position).z).normalized;
@@ -61,9 +63,16 @@ public class FogController : MonoBehaviour {
                 toReturn = pedInRange[0].position + pedInRange[0].GetComponent<PedestalController>().fogRange * Vector3.right;
                 toReturn.y = transform.position.y;
             }
-            
+            //this portion is just to test that the point just selected is even valid, and not within another pedestal's range
+            List<Transform> test = pedestalsInRange(new Vector2(toReturn.x, toReturn.z));
+            if(test.Count > 1)
+            {
+                //if it IS within another pedestal's range, change the list of nearby pedestals to be relative to the point selected, not the player.
+                //this way the resolution will be able to see the multiple circles that are needed to solve this type of problem
+                pedInRange = test;
+            }
         }
-        else if (pedInRange.Count == 2)
+        if (pedInRange.Count == 2)
         {
             //untested
             Vector2[] toTest = getCircleIntersectionPoints(
@@ -73,30 +82,34 @@ public class FogController : MonoBehaviour {
                 pedInRange[1].GetComponent<PedestalController>().fogRange);
             toReturn = new Vector3(toTest[0].x, player.position.y, toTest[0].y);
             Vector3 alternativeOption = new Vector3(toTest[1].x, player.position.y, toTest[1].y);
+            //this first if check it to avoid little differences making a large impact on the second, meaningful check
+            if(Mathf.Approximately(Vector3.Distance(player.position, alternativeOption), Vector3.Distance(player.position, toReturn)))
+            {
+                return toReturn;
+            }
             if(Vector3.Distance(player.position, alternativeOption) < Vector3.Distance(player.position, toReturn))
             {
                 toReturn = alternativeOption;
             }
             toReturn.y = transform.position.y;
         }
-        else
+        else if(pedInRange.Count > 2)
         {
             Debug.Log("lmaonerd");
-            toReturn = new Vector3();
         }
+      
         return toReturn;
     }
-    private List<Transform> pedestalsInRange()
+    private List<Transform> pedestalsInRange(Vector2 positionToCheckFrom)
     {
         List<Transform> toReturn = new List<Transform>();
         foreach(Transform t in pedestals)
         {
-            if(Vector2.Distance(new Vector2(player.position.x, player.position.z), new Vector2(t.position.x, t.position.z)) <= t.GetComponent<PedestalController>().fogRange)
+            if(Vector2.Distance(positionToCheckFrom, new Vector2(t.position.x, t.position.z)) - t.GetComponent<PedestalController>().fogRange <= distanceLeniency)
             {
                 toReturn.Add(t);
             }
         }
-        Debug.Assert(toReturn.Count > 0);
         return toReturn;
     }
 

@@ -12,9 +12,12 @@ public class PedestalController : MonoBehaviour {
     public PlayerMovementController pmc;
 
     void Start () {
-        foreach(Transform t in emitterParent.transform)
-        {
-            acceptedEmitters.Add(t.gameObject);
+        if (emitterParent)
+        { 
+            foreach (Transform t in emitterParent.transform)
+            {
+                acceptedEmitters.Add(t.gameObject);
+            }
         }
         fogRange = initialFogRange;
     }
