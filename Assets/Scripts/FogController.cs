@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class FogController : MonoBehaviour {
     private PlayerMovementController pmc;
-    private AudioSource aud;
+
     private bool fadedOut, fadedIn, hasSetPos = false;
     private List<Transform> pedestals = new List<Transform>();
     private const float distanceLeniency = 0.01f;
@@ -19,7 +19,6 @@ public class FogController : MonoBehaviour {
         fadeInVolumePerSecond /= 100;
         fadeOutVolumePerSecond /= 100;
         pmc = player.GetComponent<PlayerMovementController>();
-        aud = GetComponent<AudioSource>();
 
         foreach (Transform t in pedestalParent.transform)
         {
