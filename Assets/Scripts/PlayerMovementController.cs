@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(UIController))]
 public class PlayerMovementController : MonoBehaviour {
     public float speed = 1.0f;
     public KeyCode pickUpEmitterKey;
@@ -12,9 +13,11 @@ public class PlayerMovementController : MonoBehaviour {
     private Rigidbody rb;
     private GameObject heldEmitter = null;
     private PedestalController nearbyPedestal;
+    private UIController UI;
 
 	void Start () {
         rb = GetComponent<Rigidbody>();
+        UI = GetComponent<UIController>();
         respawnPoint = transform.position;
 	}
 
@@ -40,7 +43,14 @@ public class PlayerMovementController : MonoBehaviour {
                 {
                     heldEmitter = pickUpNearestEmitter(nearbyObjects);
                     if (heldEmitter)
+                    {
                         heldEmitter.GetComponent<EmitterController>().PickUp(this.transform);
+                    }
+                    else
+                    {
+                        //picked up nothing, play error sound
+                        UI.PlayClip("meepmorp");
+                    }
                 }
 
             }
@@ -49,9 +59,10 @@ public class PlayerMovementController : MonoBehaviour {
 
     public void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<EmitterController>())
+        if (other.GetComponent<EmitterController>() && other.GetComponent<EmitterController>().canBePickedUp)
         {
             nearbyObjects.Add(other.gameObject);
+            UI.PlayClip("wilhelm");
         }
         else if (other.GetComponent<PedestalController>())
         {

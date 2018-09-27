@@ -21,6 +21,7 @@ public class EmitterController : MonoBehaviour {
             transform.parent = source;
             transform.position = source.transform.position;
             aud.volume *= heldVolumePercentage;
+            aud.spatialBlend = 0f;
         }
     }
 
@@ -28,5 +29,6 @@ public class EmitterController : MonoBehaviour {
     {
         transform.parent = emitterParent;
         aud.volume /= heldVolumePercentage;
+        aud.spatialBlend = 1f;
     }
 }
