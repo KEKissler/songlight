@@ -27,17 +27,22 @@ public class PedestalController : MonoBehaviour {
         fogRange = extendedFogRanges[index];
     }
 
-    public void AddTrack(GameObject unverifiedEmitter)
+    public bool Contains(GameObject unverifiedEmitter)
     {
-        if (acceptedEmitters.Contains(unverifiedEmitter))
-        {
-            unverifiedEmitter.GetComponent<EmitterController>().canBePickedUp = false;
-            //unverifiedEmitter.GetComponent<AudioSource>().spatialBlend = 0;
-            unverifiedEmitter.GetComponent<AudioSource>().volume = GetComponent<AudioSource>().volume;
-            unverifiedEmitter.transform.parent = transform;
-            unverifiedEmitter.transform.position = transform.position;
-            UpdateFogRange(numTracksAdded++);
-        }
+        return acceptedEmitters.Contains(unverifiedEmitter);
+    }
+
+    //USER is exepcted to check if valid to add track here first using the contains function above
+    public void AddTrack(GameObject emitter)
+    {
+        emitter.tag = "Quietable";
+        emitter.GetComponent<EmitterController>().canBePickedUp = false;
+        //emitter.GetComponent<AudioSource>().spatialBlend = 0;
+        emitter.GetComponent<AudioSource>().volume = GetComponent<AudioSource>().volume;
+        emitter.transform.parent = transform;
+        emitter.transform.position = transform.position;
+        UpdateFogRange(numTracksAdded++);
+
         if(numTracksAdded == acceptedEmitters.Count)
         {
             pmc.respawnPoint = new Vector3(transform.position.x, pmc.respawnPoint.y, transform.position.z);

@@ -18,6 +18,7 @@ public class EmitterController : MonoBehaviour {
     {
         if (canBePickedUp)
         {
+            transform.tag = "Quietable";
             transform.parent = source;
             transform.position = source.transform.position;
             aud.volume *= heldVolumePercentage;
@@ -27,6 +28,7 @@ public class EmitterController : MonoBehaviour {
 
     public void PutDown()
     {
+        transform.tag = "Unquietable";
         transform.parent = emitterParent;
         aud.volume /= heldVolumePercentage;
         aud.spatialBlend = 1f;
