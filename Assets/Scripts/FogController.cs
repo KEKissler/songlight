@@ -150,6 +150,7 @@ public class FogController : MonoBehaviour {
 
     private void respawnPlayer()
     {
+        player.GetComponent<PlayerMovementController>().UI.PlayClip("wilhelm");
         fadedOut = false;
         fadedIn = false;
         hasSetPos = false;

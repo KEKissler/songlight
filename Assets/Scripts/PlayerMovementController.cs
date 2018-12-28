@@ -8,6 +8,7 @@ public class PlayerMovementController : MonoBehaviour {
     public KeyCode pickUpEmitterKey, scanKey;
     public float scanRange;
     public float scanSilenceMultiplier;
+    public float scanFadeTime;
     public LayerMask lm;
     [HideInInspector] public bool isRespawning = false;
     [HideInInspector] public Vector3 respawnPoint;
@@ -16,10 +17,13 @@ public class PlayerMovementController : MonoBehaviour {
     private Rigidbody rb;
     private GameObject heldEmitter = null;
     private PedestalController nearbyPedestal;
-    private UIController UI;
+    [HideInInspector]
+    public UIController UI;
     private List<AudioSource> sources;
     private List<AudioSource> quietedSources;
     private float savedSpeed;
+    private bool fadingOut = false;
+    private float timeSinceStartofFadeOut;
 
 
 
@@ -30,6 +34,7 @@ public class PlayerMovementController : MonoBehaviour {
         sources = new List<AudioSource>();
         quietedSources = new List<AudioSource>();
         savedSpeed = speed;
+        timeSinceStartofFadeOut = scanFadeTime + 1;//anything larger than scanFadeTime
     }
 
     void Update()
@@ -38,7 +43,21 @@ public class PlayerMovementController : MonoBehaviour {
         {
             //actual player movement
             rb.velocity = speed * new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
+            //managing fadingout and timesince
+            if(fadingOut){
+                if(timeSinceStartofFadeOut < scanFadeTime)
+                {
+                    timeSinceStartofFadeOut += Time.deltaTime;
+                }
+                else
+                {
+                    //will be guaranteed to finish by now
+                    timeSinceStartofFadeOut = scanFadeTime + 1f;
+                    fadingOut = false;
+                }
             
+               
+            }
             if (Input.GetKeyDown(pickUpEmitterKey))
             {
                     //already holding an emitter
@@ -47,6 +66,7 @@ public class PlayerMovementController : MonoBehaviour {
                     heldEmitter.GetComponent<EmitterController>().PutDown();
                     if (nearbyPedestal && nearbyPedestal.Contains(heldEmitter))
                     {
+                        heldEmitter.GetComponent<AudioSource>().SetCustomCurve(AudioSourceCurveType.CustomRolloff, nearbyPedestal.GetComponent<AudioSource>().GetCustomCurve(AudioSourceCurveType.CustomRolloff));
                         nearbyPedestal.AddTrack(heldEmitter);
                         nearbyObjects.Remove(heldEmitter);//no longer interactable as it is part of the pedestal now
                         UI.PlayClip("DropOffSuccessful");
@@ -101,14 +121,41 @@ public class PlayerMovementController : MonoBehaviour {
         {
             if(aud.tag == "Quietable")
             {
+                Debug.Log("quieting \"" + aud.name + "\"");
+                Debug.Log(aud.volume + "    " + aud.volume * scanSilenceMultiplier);
+                fadingOut = true;
+                timeSinceStartofFadeOut = 0f;
+                //StartCoroutine(fadeToTargetVolume(aud, aud.volume * scanSilenceMultiplier, scanFadeTime));   
                 aud.volume *= scanSilenceMultiplier;
                 quietedSources.Add(aud);
             }
         }
     }
 
+    //valid param checking beforehand plz
+    public IEnumerator fadeToTargetVolume(AudioSource aud, float targetVolume, float seconds)
+    {
+        int i = 0;
+        float step = Time.fixedDeltaTime * (targetVolume - aud.volume) / seconds;
+        Debug.Log(step);
+        //while applying the next step would bring the current volume closer to the target volume, keep going
+        while (Mathf.Abs(aud.volume + step - targetVolume) < Mathf.Abs(aud.volume - targetVolume))
+        {
+            aud.volume += step;
+            yield return new WaitForFixedUpdate();
+        }
+        yield return new WaitForFixedUpdate();
+        //at this point the difference between current volume and target volume is less than a step, so just make that little jump
+        aud.volume = targetVolume;
+        yield break;
+    }
+
     private void unchangeSourceSounds()
     {
+        if (fadingOut)
+        {
+            Invoke("unchangeSourceSounds", scanFadeTime - timeSinceStartofFadeOut);
+        }
         foreach(AudioSource aud in quietedSources)
         {
             aud.volume /= scanSilenceMultiplier;
@@ -120,7 +167,7 @@ public class PlayerMovementController : MonoBehaviour {
         if (other.GetComponent<EmitterController>() && other.GetComponent<EmitterController>().canBePickedUp)
         {
             nearbyObjects.Add(other.gameObject);
-            UI.PlayClip("wilhelm");
+            //UI.PlayClip("wilhelm");
         }
         else if (other.GetComponent<PedestalController>())
         {
